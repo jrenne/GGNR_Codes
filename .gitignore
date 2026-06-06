@@ -1,0 +1,16 @@
+.DS_Store
+*.asv
+*.m~
+*.log
+*.aux
+*.out
+*.synctex.gz
+data/Data_US/*.zip
+data/Data_US/Data_Fed_PTR/data_only_package/
+data/Data_US/*
+!data/Data_US/.gitkeep
+data/data_from_r.mat
+Figures/*
+!Figures/.gitkeep
+Tables/*
+!Tables/.gitkeep
