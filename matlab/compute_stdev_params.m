@@ -1,6 +1,10 @@
 % =========================================================================
 % Compute standard deviation of parameter estimates
 % =========================================================================
+%
+% Legacy helper retained for completeness. It is not called by
+% run_replication.m, which evaluates the paper specification at the stored
+% parameter vector and reports the standard errors used in the paper tables.
 
 % Choose method to calculate Covariance matrix of sub_parameters
 % 1 = Matlab's fminunc Hessian

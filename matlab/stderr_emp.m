@@ -20,8 +20,6 @@ J_ij = nan(length(par_ind_std)); % Hessian
 
 
 for j = par_ind_std
-    disp(find(par_ind_std==j))
-
     if ismember(j, [66])
         par_range = 0:0.2*x1(j):2*x1(j);
     elseif ismember(j, [8, 22, 41])

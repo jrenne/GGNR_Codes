@@ -113,10 +113,7 @@ if stderr_calc
     VarH = inv(Hess);
     stderr = sqrt(abs(diag(diag(deltas(par_ind_full))'*VarH*diag(deltas(par_ind_full)))))';
 
-    %addpath(genpath('DERIVESTsuite'));
-    %Hess=Hess_est(@(startpoint)maxlik_full(startpoint, allpars), startpoint);
-    %[Hess] = hessian1(@(startpoint)maxlik_full(startpoint, allpars),startpoint); %hessian from fminunc gives 'better' (bigger) standard errors in the White estimator
-    %stderr=sqrt(abs(diag(inv(Hess))))';
+    % The fminunc Hessian is used here for the reported standard errors.
 
     stderr_all = nan(size(x_0));
     stderr_all(par_ind_full) = stderr;
