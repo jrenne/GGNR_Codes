@@ -20,6 +20,8 @@ run('matlab/run_replication.m')
 
 This is the Matlab entry point for the replication package. It loads `data/data_JPR.mat`, evaluates the model at the parameter values used in the paper, and writes outputs to `Figures/` and `Tables/`.
 
+By default, the script evaluates the stored parameter vector. To continue the numerical estimation from that vector, set `run_estimation = true` near the top of `matlab/run_replication.m` before running the script. The nearby `max_estimation_iter` setting controls the maximum number of optimizer iterations, which is useful for short checks. Re-estimation is slower and may produce small differences across Matlab versions and optimization settings.
+
 ## Rebuilding The Data
 
 The R pipeline downloads public data and reconstructs the U.S. estimation database:

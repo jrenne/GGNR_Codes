@@ -5,6 +5,9 @@
 clearvars;
 close all;
 
+run_estimation = false; % set to true to continue estimation from x0
+max_estimation_iter = 100; % used only when run_estimation is true
+
 script_dir = fileparts(mfilename('fullpath'));
 cd(script_dir);
 addpath(script_dir);
@@ -75,8 +78,13 @@ x0 = [0.0104692704306508302,1.5,0.041666666666666699,0.000348014805880652851,0.7
 x0(27:29) = -x0(27:29);
 x0(64:end) = -x0(64:end);
 par_ind_est = [1 [] 5 [] 7:11 [] 13:15 [] 18:22 [] 24 [] 27:29 30 37:39 40:44 64:68];
+if run_estimation
+    model_mode = 'estimate';
+else
+    model_mode = 'eval';
+end
 [fval, estimates, x_upd, x_std, macro_fit, yfit_n, yfit_r, surv_infexp_fit, surv_gdpexp_fit, surv_tbexp_fit, term_prem_n, term_prem_r, irp] = ...
-    GGNR_model([macro_int], yields_n, mats_n, yields_r, mats_r, surv_infexp_int, hstep_s,surv_gdpexp_int,hstep_g,surv_tbexp_int,hstep_t, tT, x0, par_ind_est, 'eval');
+    GGNR_model([macro_int], yields_n, mats_n, yields_r, mats_r, surv_infexp_int, hstep_s,surv_gdpexp_int,hstep_g,surv_tbexp_int,hstep_t, tT, x0, par_ind_est, model_mode, max_estimation_iter);
 
 par_ind_std = [1 [] 5 [] 7:10 [] 13 [] 18:22 [] 24 [] 27:29 [] 37:39 40:44 64:68];
 
@@ -121,4 +129,3 @@ figure_irf_yields(estimates, [24 120],  120, 0.0025/x0(4), [0.04 -0.02], {'s_t'}
 print(gcf, "-dpdf", "-painters", "../Figures/fig_irf_s=0bp,r_pi.pdf")
 
 disp("Replication complete. Outputs were written to ../Figures and ../Tables.")
-

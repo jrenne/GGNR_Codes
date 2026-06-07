@@ -1,6 +1,6 @@
 function [fval, estimates_out, x_upd, x_std, macro_fit, yfit_n, yfit_r, surv_infexp_fit, surv_gdpexp_fit, surv_tbexp_fit, term_prem_n, term_prem_r, irp, fval_t, stderr_all, Hess] = ...
     GGNR_model(macro, yields_n, mats_n, yields_r, mats_r, surv_infexp, hstep_s, ...
-    surv_gdpexp, hstep_g, surv_tbexp, hstep_t, tT,  x_0, par_ind_full, eval)
+    surv_gdpexp, hstep_g, surv_tbexp, hstep_t, tT,  x_0, par_ind_full, eval, max_estimation_iter)
 % Code with 3-month T-bill expectations fitted by mid-year values
 % No autocorrelated monetary policy shock in z_t (u_t) but
 % Time-varying kappa
@@ -15,10 +15,11 @@ Gamma_g0 = []; Gamma_g = []; Mu = []; Phi = []; output_message = []; yfit_n = []
 J_smooth = []; x_pred = []; A_X_for_P = []; B_X_for_P = []; A_X_exp_P = []; A_X_for_pi_P = []; B_X_cum_P = []; B_X_cum_pi_P = [];
 Phi_j = []; I_Phi_inv = []; delta_1 = []; delta_0 = 0;
 
-if nargin<15
-    eval=[];
-else
-    eval='eval';
+if nargin < 15 || isempty(eval)
+    eval = 'estimate';
+end
+if nargin < 16 || isempty(max_estimation_iter)
+    max_estimation_iter = length(par_ind_full);
 end
 
 if nargout>=15
@@ -90,7 +91,7 @@ if verbose_fit
 end
 
 disp_opt = 'iter-detailed'; % 'off'; %
-options_fminsearch = optimset('Display',disp_opt, 'Maxiter', length(par_ind_full));%'off');
+options_fminsearch = optimset('Display',disp_opt, 'MaxIter', max_estimation_iter);
 options_fminunc = optimset('Display',disp_opt);
 if strcmp(eval,'eval')==0
     [estimates]=estimate(estimates);
