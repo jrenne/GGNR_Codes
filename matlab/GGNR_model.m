@@ -1,5 +1,5 @@
 function [fval, estimates_out, x_upd, x_std, macro_fit, yfit_n, yfit_r, surv_infexp_fit, surv_gdpexp_fit, surv_tbexp_fit, term_prem_n, term_prem_r, irp, fval_t, stderr_all, Hess] = ...
-    GGNR_model_v13(macro, yields_n, mats_n, yields_r, mats_r, surv_infexp, hstep_s, ...
+    GGNR_model(macro, yields_n, mats_n, yields_r, mats_r, surv_infexp, hstep_s, ...
     surv_gdpexp, hstep_g, surv_tbexp, hstep_t, tT,  x_0, par_ind_full, eval)
 % Code with 3-month T-bill expectations fitted by mid-year values
 % No autocorrelated monetary policy shock in z_t (u_t) but
@@ -26,6 +26,7 @@ if nargout>=15
 else
     stderr_calc = 0;
 end
+verbose_fit = nargout < 14;
 %stderr_calc = 0;
 
 if ismember(26,par_ind_full)
@@ -84,7 +85,9 @@ fval = sum(fval_t);
 estimates = startpoint;
 fval0 = fval;
 
-fprintf('Initial likelihood :       %8.6f;\n', fval0);
+if verbose_fit
+    fprintf('Initial likelihood :       %8.6f;\n', fval0);
+end
 
 disp_opt = 'iter-detailed'; % 'off'; %
 options_fminsearch = optimset('Display',disp_opt, 'Maxiter', length(par_ind_full));%'off');
@@ -107,9 +110,10 @@ if stderr_calc
         par_ind_full(par_ind_full==4) = [];
         startpoint(par_ind_full==4) = [];
     end
-	fprintf('Calculating standard errors at the likelihood point: %8.6f \n', -maxlik_full(startpoint, allpars))
-    options1=optimset('Display','iter-detailed','MaxFunEval',0);
+	fprintf('Computing Hessian-based standard errors at likelihood point %8.6f...\n', -maxlik_full(startpoint, allpars))
+    options1=optimset('Display','off','MaxFunEval',0);
     [estimates,fval,~,~,~,Hess]=fminunc(@(startpoint)maxlik_full(startpoint, allpars), startpoint, options1);
+    fprintf('Hessian calculation complete.\n')
     VarH = inv(Hess);
     stderr = sqrt(abs(diag(diag(deltas(par_ind_full))'*VarH*diag(deltas(par_ind_full)))))';
 
@@ -124,7 +128,9 @@ if ~isempty(output_message)
     fprintf(2,output_message);
 end
 
-toc
+if verbose_fit
+    toc
+end
 
 if strcmp(eval,'eval') || isfile('stop.txt') 
     print_fit();
@@ -635,6 +641,7 @@ end
 
         macro_fit = Gamma_m0' + x_upd*Gamma_m';
         surv_infexp_fit = Gamma_s0' + x_upd*Gamma_s';
+        surv_gdpexp_fit = Gamma_g0' + x_upd*Gamma_g';
 
         % Fitted yields:
         [yfit_all_n, yfit_all_r] = ...
@@ -661,63 +668,64 @@ end
         % Inflation risk premium:
         irp = ils - expinf;
 
-        u = yields_n - yfit_n;
-        u2=u(2:end,:).^2;
-        rmse=sqrt(nanmean(u2))*10000*12;
-        fprintf('Maturities:              \t\t'); fprintf('%8.0f', mats_n); fprintf('\n');
-        fprintf('Nominal yields RMSE (bp):\t\t ');
-        fprintf('%8.2f', rmse);
-        fprintf(';\t Average RMSE: %3.2f', mean(rmse))
-        fprintf('\n');
-
-        ind_r;
-        u = yields_r - yfit_r;
-        u2=u(2:end,:).^2;
-        rmse=sqrt(nanmean(u2(~ind_r(2:end),:)))*10000*12;
-        fprintf('Real yields - Normal liquidity RMSE (bp):\t\t ');
-        fprintf('%8.2f', rmse);
-        fprintf(';\t Average RMSE: %3.2f', mean(rmse))
-        fprintf('\n');
-
-
-        rmse=sqrt(nanmean(u2(ind_r(2:end),:)))*10000*12;
-        fprintf('Real yields - High liquidity RMSE (bp):\t\t\t ');
-        fprintf('%8.2f', rmse);
-        fprintf(';\t Average RMSE: %3.2f', mean(rmse))
-        fprintf('\n');
-
-        rmse=sqrt(nanmean(u2))*10000*12;
-        fprintf('Average real RMSE (bp):\t\t\t\t\t\t\t ');
-        fprintf('%8.2f', rmse);
-        fprintf(';\t Average RMSE: %3.2f', mean(rmse))
-        fprintf('\n');
-
-
-        u = surv_infexp - surv_infexp_fit;
-        u2=u(2:end,:).^2;
-        rmse=sqrt(nanmean(u2))*10000*12;
-        fprintf('Fitting exp.inf. RMSE (bp):\t\t\t    ');
-        fprintf('%8.2f\t\t\t\t\t\t', rmse(1));fprintf(' %8.2f', rmse(2));% fprintf('%8.2f', rmse(3));
-        fprintf(';\t Average RMSE: %3.2f', mean(rmse))
-        fprintf('\n');
-
-
-        surv_gdpexp_fit = Gamma_g0' + x_upd*Gamma_g';
-        u = surv_gdpexp - surv_gdpexp_fit;
-        u2=u(2:end,:).^2;
-        rmse=sqrt(nanmean(u2))*10000*12;
-        fprintf('Fitting exp.GDP. RMSE (bp):\t\t\t    ');
-        fprintf('%8.2f\t\t\t\t\t\t', rmse(1)); fprintf(' %8.2f', rmse(2));
-        fprintf(';\t Average RMSE: %3.2f', mean(rmse))
-        fprintf('\n');
-
-        u = surv_tbexp - surv_tbexp_fit;
-        u2=u(2:end,:).^2;
-        rmse=sqrt(nanmean(u2))*10000*12;
-        fprintf('Fitting exp.3-m rate RMSE (bp):\t\t\t');
-        fprintf('%8.2f\t\t\t\t\t\t', rmse(1)); fprintf(' %8.2f', rmse(2));
-        fprintf(';\t Average RMSE: %3.2f', mean(rmse))
-        fprintf('\n');
+        if verbose_fit
+            u = yields_n - yfit_n;
+            u2=u(2:end,:).^2;
+            rmse=sqrt(nanmean(u2))*10000*12;
+            fprintf('Maturities:              \t\t'); fprintf('%8.0f', mats_n); fprintf('\n');
+            fprintf('Nominal yields RMSE (bp):\t\t ');
+            fprintf('%8.2f', rmse);
+            fprintf(';\t Average RMSE: %3.2f', mean(rmse))
+            fprintf('\n');
+    
+            ind_r;
+            u = yields_r - yfit_r;
+            u2=u(2:end,:).^2;
+            rmse=sqrt(nanmean(u2(~ind_r(2:end),:)))*10000*12;
+            fprintf('Real yields - Normal liquidity RMSE (bp):\t\t ');
+            fprintf('%8.2f', rmse);
+            fprintf(';\t Average RMSE: %3.2f', mean(rmse))
+            fprintf('\n');
+    
+    
+            rmse=sqrt(nanmean(u2(ind_r(2:end),:)))*10000*12;
+            fprintf('Real yields - High liquidity RMSE (bp):\t\t\t ');
+            fprintf('%8.2f', rmse);
+            fprintf(';\t Average RMSE: %3.2f', mean(rmse))
+            fprintf('\n');
+    
+            rmse=sqrt(nanmean(u2))*10000*12;
+            fprintf('Average real RMSE (bp):\t\t\t\t\t\t\t ');
+            fprintf('%8.2f', rmse);
+            fprintf(';\t Average RMSE: %3.2f', mean(rmse))
+            fprintf('\n');
+    
+    
+            u = surv_infexp - surv_infexp_fit;
+            u2=u(2:end,:).^2;
+            rmse=sqrt(nanmean(u2))*10000*12;
+            fprintf('Fitting exp.inf. RMSE (bp):\t\t\t    ');
+            fprintf('%8.2f\t\t\t\t\t\t', rmse(1));fprintf(' %8.2f', rmse(2));% fprintf('%8.2f', rmse(3));
+            fprintf(';\t Average RMSE: %3.2f', mean(rmse))
+            fprintf('\n');
+    
+    
+            u = surv_gdpexp - surv_gdpexp_fit;
+            u2=u(2:end,:).^2;
+            rmse=sqrt(nanmean(u2))*10000*12;
+            fprintf('Fitting exp.GDP. RMSE (bp):\t\t\t    ');
+            fprintf('%8.2f\t\t\t\t\t\t', rmse(1)); fprintf(' %8.2f', rmse(2));
+            fprintf(';\t Average RMSE: %3.2f', mean(rmse))
+            fprintf('\n');
+    
+            u = surv_tbexp - surv_tbexp_fit;
+            u2=u(2:end,:).^2;
+            rmse=sqrt(nanmean(u2))*10000*12;
+            fprintf('Fitting exp.3-m rate RMSE (bp):\t\t\t');
+            fprintf('%8.2f\t\t\t\t\t\t', rmse(1)); fprintf(' %8.2f', rmse(2));
+            fprintf(';\t Average RMSE: %3.2f', mean(rmse))
+            fprintf('\n');
+        end
 
     end
 

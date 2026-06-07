@@ -29,7 +29,7 @@ for j = 1:size(b,2)
     irf_r = irf_r_all(mats2plot,:);
     cond_txt = ['$',var_txt{1}, '=', num2str(b(1,j)*100), '\%$'];
     for k = 2:size(b,1)
-        cond_txt = [,cond_txt,',$',var_txt{k}, '=', num2str(b(k,j)*100), '\%$'];
+        cond_txt = [cond_txt, ',$', var_txt{k}, '=', num2str(b(k,j)*100), '\%$'];
     end
     
     subplot(1,2,1);

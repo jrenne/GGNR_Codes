@@ -1,4 +1,4 @@
-%% Replicate the U.S. results in Golinski, Guilloux-Nefussi, and Renne
+%% Replicate the results in Golinski, Guilloux-Nefussi, and Renne
 %
 % This script evaluates the model at the parameter values used in the paper.
 
@@ -76,24 +76,25 @@ x0(27:29) = -x0(27:29);
 x0(64:end) = -x0(64:end);
 par_ind_est = [1 [] 5 [] 7:11 [] 13:15 [] 18:22 [] 24 [] 27:29 30 37:39 40:44 64:68];
 [fval, estimates, x_upd, x_std, macro_fit, yfit_n, yfit_r, surv_infexp_fit, surv_gdpexp_fit, surv_tbexp_fit, term_prem_n, term_prem_r, irp] = ...
-    GGNR_model_v13([macro_int], yields_n, mats_n, yields_r, mats_r, surv_infexp_int, hstep_s,surv_gdpexp_int,hstep_g,surv_tbexp_int,hstep_t, tT, x0, par_ind_est, 'eval');
+    GGNR_model([macro_int], yields_n, mats_n, yields_r, mats_r, surv_infexp_int, hstep_s,surv_gdpexp_int,hstep_g,surv_tbexp_int,hstep_t, tT, x0, par_ind_est, 'eval');
 
 par_ind_std = [1 [] 5 [] 7:10 [] 13 [] 18:22 [] 24 [] 27:29 [] 37:39 40:44 64:68];
 
-[~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, irp, fval_t, stderr_all, Hess] = ...
-    GGNR_model_v13([macro_int], yields_n, mats_n, yields_r, mats_r, surv_infexp_int, hstep_s,surv_gdpexp_int,hstep_g,surv_tbexp_int,hstep_t, tT, x0, par_ind_std, 'eval');
+stderr_g_paper = [0.00422375673990622	0.389298510930572	0.000102394041406234	0.977257594985957	0.0144546549475322	0.000360256414274548	3.53201334278942e-06	1.85839312001177	0.00684118331246009	0.000108630756841868	0.000391713007506593	0.000520508426802116	0.0815567000621122	0.107467733286203	0.434413354203170	0.430253379170576	1.95665014939236e-05	5.36625933592381e-05	0.000312235677405370	0.527666178284888	0.232993301648023	15.5931279754173	4.03417166233649	265.702235421144	0.264222144302864	2.61461067535409	3.73902640543924	1.51204245649152	30.9733095800693];
 
-
-[stderr_g, stderr_h, stderr_w, CovMat_g, CovMat_h, CovMat_w, J_ij] = ...
-    stderr_emp(macro_int, yields_n, mats_n, yields_r, mats_r, surv_infexp_int, ...
+[stderr_g, ~, ~] = stderr_emp(macro_int, yields_n, mats_n, yields_r, mats_r, surv_infexp_int, ...
     hstep_s,surv_gdpexp_int,hstep_g,surv_tbexp_int,hstep_t, tT, x0, par_ind_est, par_ind_std);
 
-% Standard errors used in the paper tables.
-stderr_g = [0.00422375673990622	0.389298510930572	0.000102394041406234	0.977257594985957	0.0144546549475322	0.000360256414274548	3.53201334278942e-06	1.85839312001177	0.00684118331246009	0.000108630756841868	0.000391713007506593	0.000520508426802116	0.0815567000621122	0.107467733286203	0.434413354203170	0.430253379170576	1.95665014939236e-05	5.36625933592381e-05	0.000312235677405370	0.527666178284888	0.232993301648023	15.5931279754173	4.03417166233649	265.702235421144	0.264222144302864	2.61461067535409	3.73902640543924	1.51204245649152	30.9733095800693];
-stderr_w = [0.000281208948195397	0.00798532582274681	2.36732957306201e-06	0.0275153015985763	0.00194486379352145	8.17029203149404e-05	8.93103417927143e-07	0.0141385547736520	0.000223694152248699	1.27664276545052e-05	1.23627938185219e-05	3.29050066446198e-05	0.00224800712410666	0.000865936526552891	0.000643116145854824	0.000289515818334756	1.07966833211745e-06	3.35862879405972e-06	1.26604624526543e-05	0.00117478041208538	0.00742054490393229	0.0226495887708648	0.0191885993396253	0.196803953748753	0.00561013890255147	0.0156627223044626	0.0273215968141118	0.0164129186243947	0.532895750905238];
+fprintf('Maximum absolute difference from paper standard errors: %.6g\n', ...
+    max(abs(stderr_g - stderr_g_paper)))
+[stderr_diff_max, stderr_diff_ind] = max(abs(stderr_g - stderr_g_paper));
+fprintf('Largest standard-error difference at parameter index %d: computed %.6g, paper %.6g\n', ...
+    par_ind_std(stderr_diff_ind), stderr_g(stderr_diff_ind), stderr_g_paper(stderr_diff_ind))
 
 stderr = nan(length(x0),1);
 stderr(par_ind_std) = stderr_g;
+
+x_bounds = x_bounds_vals();
 
 make_table_pars;
 make_table_rmse;
@@ -120,8 +121,4 @@ figure_irf_yields(estimates, [24 120],  120, 0.0025/x0(4), [0.04 -0.02], {'s_t'}
 print(gcf, "-dpdf", "-painters", "../Figures/fig_irf_s=0bp,r_pi.pdf")
 
 disp("Replication complete. Outputs were written to ../Figures and ../Tables.")
-
-
-
-
 
