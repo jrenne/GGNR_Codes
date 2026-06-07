@@ -18,7 +18,7 @@ Open Matlab from the repository root and run:
 run('matlab/run_replication.m')
 ```
 
-The script loads `data/data_JPR.mat`, evaluates the model at the parameter values used in the paper, and writes outputs to `Figures/` and `Tables/`.
+This is the Matlab entry point for the replication package. It loads `data/data_JPR.mat`, evaluates the model at the parameter values used in the paper, and writes outputs to `Figures/` and `Tables/`.
 
 ## Rebuilding The Data
 
