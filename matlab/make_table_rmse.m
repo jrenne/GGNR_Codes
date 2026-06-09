@@ -31,7 +31,7 @@ rmse_t = sqrt(nanmean(u2))*10000*12;
 
 
 % The table:
-txt = {'\begin{tabular}{lrrrrrrrr} \hline '};
+txt = {'\begin{tabularx}{\textwidth}{>{\hsize=2.0\hsize\raggedright\arraybackslash}X*{8}{>{\hsize=.875\hsize\centering\arraybackslash}X}} \hline '};
 txt{2} = 'Maturities & 3m & 1y & 2y & 3y & 5y & 7y & 10y & Average \\ \hline';
 txt{end+1} = '\multicolumn{9}{l}{Yields:} \\';
 
@@ -96,7 +96,7 @@ txt{end} = [txt{end}, sprintf('& %2.0f ', mean(rmse_t)), '\\'];
 
 
 txt{end+1} = '\hline';
-txt{end+1} = '\end{tabular}';
+txt{end+1} = '\end{tabularx}';
 
 latexTable = sprintf('%s\n', txt{:});
 

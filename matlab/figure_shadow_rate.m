@@ -17,5 +17,5 @@ legend(p, 'Fed funds rate', '$s_t$', 'Interpreter','Latex')
 
 fig = gcf;
 %print(fig, "-dpdf", "-painters", "../Figures/fig_shadow_rate_revision.eps")
-print(fig, "-dpdf", "-painters", "../Figures/fig_shadow_rate_revision.pdf")
+save_pdf_figure(fig, "../Figures/fig_shadow_rate_revision.pdf")
 

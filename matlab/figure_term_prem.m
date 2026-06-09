@@ -85,5 +85,4 @@ ylabel('%', 'Rotation', 0)
 
 fig = gcf;
 %print(fig, "-dpdf", "-painters", "../Figures/fig_term_prem_revision.eps")
-print(fig, "-dpdf", "-painters", "../Figures/fig_term_prem_revision.pdf")
-
+save_pdf_figure(fig, "../Figures/fig_term_prem_revision.pdf")

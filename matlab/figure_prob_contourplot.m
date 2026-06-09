@@ -57,6 +57,6 @@ xlabel('Natural rate of interest, $r^*$', 'Interpreter','latex')
 
 fig = gcf;
 %print(fig, "-dpdf", "-painters", "../Figures/fig_probs.eps")
-print(fig, "-dpdf", "-painters", "../Figures/fig_probs.pdf")
+save_pdf_figure(fig, "../Figures/fig_probs.pdf")
 
 

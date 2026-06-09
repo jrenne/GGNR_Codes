@@ -67,5 +67,5 @@ title('Nominal 10-year yield', 'Interpreter','Latex')
 fig = gcf;
 %print(fig, "-depsc", "-painters", "../Figures/fig_term_prem.eps")
 %print(fig, "-dpdf", "-painters", "../Figures/fig_yields_nom_revision.eps")
-print(fig, "-dpdf", "-painters", "../Figures/fig_yields_nom_revision.pdf")
+save_pdf_figure(fig, "../Figures/fig_yields_nom_revision.pdf")
 

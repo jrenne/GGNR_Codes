@@ -121,7 +121,7 @@ par_ind_est_aux = par_ind_est(24:end); % price of risk parameters
 
 
 % The table:
-txt = {'\begin{tabular}{crc|crrc} \hline '};
+txt = {'\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}Xcc|>{\centering\arraybackslash}Xcc} \hline '};
 txt{2} = 'Parameter & Estimate (S.E.) & Multiplier';
 txt{2} = [txt{2}, ' & ', txt{2}, '\\ \hline'];
 txt{end+1} = '\multicolumn{4}{l}{Estimated model parameters:} & & \\';
@@ -215,7 +215,7 @@ end
 
 
 txt{end+1} = '\hline';
-txt{end+1} = '\end{tabular}';
+txt{end+1} = '\end{tabularx}';
 
 latexTable = sprintf('%s\n', txt{:});
 

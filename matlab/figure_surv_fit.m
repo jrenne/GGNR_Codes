@@ -80,4 +80,4 @@ title('SPF 3-month T-bill rate: 10-year', 'Interpreter','Latex')
 
 fig = gcf;
 %print(fig, "-dpdf", "-painters", "../Figures/fig_surv_revision.eps")
-print(fig, "-dpdf", "-painters", "../Figures/fig_surv_revision.pdf")
+save_pdf_figure(fig, "../Figures/fig_surv_revision.pdf")

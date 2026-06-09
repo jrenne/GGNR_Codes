@@ -45,5 +45,5 @@ legend('Observed', '$z_t$', 'Location','S', 'Interpreter','Latex')
 
 fig = gcf;
 %print(fig, "-dpdf", "-painters", "../Figures/fig_macro_vars_revision.eps")
-print(fig, "-dpdf", "-painters", "../Figures/fig_macro_vars_revision.pdf")
+save_pdf_figure(fig, "../Figures/fig_macro_vars_revision.pdf")
 

@@ -39,5 +39,4 @@ title('$w_t$', 'Interpreter','Latex')
 
 fig = gcf;
 %print(fig, "-dpdf", "-painters", "../Figures/fig_stars_revision.eps")
-%print(fig, "-dpdf", "-painters", "../Figures/fig_stars_revision.pdf")
-
+save_pdf_figure(fig, "../Figures/fig_stars_revision.pdf")

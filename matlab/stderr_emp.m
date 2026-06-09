@@ -20,11 +20,11 @@ for jj = 1:length(par_ind_std)
 
     if ismember(j, [66])
         par_range = 0:0.2*x1(j):2*x1(j);
-    elseif ismember(j, [8, 22, 41])
+    elseif ismember(j, [8, 22, 41, 68])
         par_range = 0.5*x1(j):0.1*x1(j):1.5*x1(j);
-    elseif ismember(j, [7, 18, 20, 27, 29, 43, 44, 65, 67])
+    elseif ismember(j, [5, 7, 18, 20, 27, 29, 43, 44, 65, 67])
         par_range = 0.8*x1(j):0.04*x1(j):1.2*x1(j);
-    elseif ismember(j, [28, 68])
+    elseif ismember(j, [28])
         par_range = x1(j)-5*0.01:0.01:x1(j)+5*0.01;
     elseif abs(x1(j)) >= 0.001
         par_range = 0.9*x1(j):0.02*x1(j):1.1*x1(j);
@@ -32,7 +32,7 @@ for jj = 1:length(par_ind_std)
         par_range = x1(j)-5*0.0002:0.0002:x1(j)+5*0.0002;
     end
 
-    node_distance = 3;
+    node_distance = 4;
     epsilon_j = abs(par_range(6+node_distance) - par_range(6));
     
     x1_aux_j = x1;
@@ -48,7 +48,9 @@ for jj = 1:length(par_ind_std)
         GGNR_model([macro_int], yields_n, mats_n, yields_r, mats_r, surv_infexp_int, ...
         hstep_s,surv_gdpexp_int,hstep_g,surv_tbexp_int,hstep_t, tT, x0_aux_j, par_ind_est, 'eval');
     
-    grad_t(:,find(par_ind_std==j)) = (logl_tj2 - logl_tj1)/(2*epsilon_j);
+    logl_tj = sum(logl_tj1+logl_tj2, 2)/2;
+
+    grad_t(:,find(par_ind_std==j)) = (logl_t0 - logl_tj)/epsilon_j;
 end
 fprintf('Finite-difference gradient calculation complete.\n')
 

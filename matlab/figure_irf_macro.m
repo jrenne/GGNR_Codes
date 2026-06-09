@@ -124,7 +124,7 @@ title('$\varepsilon_{\pi,t}$', 'Interpreter','latex')
 
 fig = gcf;
 %print(fig, "-dpdf", "-painters", "../Figures/fig_irf_macro.eps")
-print(fig, "-dpdf", "-painters", "../Figures/fig_irf_macro.pdf")
+save_pdf_figure(fig, "../Figures/fig_irf_macro.pdf")
 
 
 

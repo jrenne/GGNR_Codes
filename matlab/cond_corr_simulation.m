@@ -96,5 +96,5 @@ legend(legend_txt,'Location','southwest')
 
 fig = gcf;
 %print(fig, "-dpdf", "-painters", "../Figures/fig_cond_corr.eps")
-print(fig, "-dpdf", "-painters", "../Figures/fig_cond_corr.pdf")
+save_pdf_figure(fig, "../Figures/fig_cond_corr.pdf")
 
